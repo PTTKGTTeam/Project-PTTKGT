@@ -87,7 +87,7 @@ function startBFS() {
 async function startBFS() {
   if (!target) return;
 
-  const res = await fetch("http://localhost:3000/bfs", {
+  const res = await fetch("http://localhost:3000/run-bfs", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
