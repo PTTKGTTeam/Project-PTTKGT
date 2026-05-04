@@ -1,66 +1,44 @@
-#include <queue>
 #include "bfs.h"
-#include <iostream>
-#include <fstream>
-using namespace std;
+#include "grid.h"
 
-void bfs(int map[][4], Node b, int i, int j) {
-    // đọc bản đồ từ file map.txt
-    ifstream fin("map.txt");
-    int a[5][5];
-    //cout << endl;
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            fin >> a[i][j];
-            //cout << a[i][j] << " ";
-        }
-        //cout << endl;
-    }
+vector<pair<int,int>> bfs(pair<int,int> s, pair<int,int> t){
+    queue<pair<int,int>> q;
+    map<pair<int,int>, pair<int,int>> parent;
+    map<pair<int,int>, bool> vis;
 
-    // BFS để tìm đường đi ngắn nhất từ B[i] đến B[j]
-    queue<Nodes> q;
-    bool visited[5][5] = {false};
+    q.push(s);
+    vis[s]=true;
 
-    q.push({b.x, b.y, 0});
-    visited[b.x][b.y] = true;
+    while(!q.empty()){
+        auto u=q.front(); q.pop();
 
-    int dx[] = {1, -1, 0, 0};
-    int dy[] = {0, 0, 1, -1};
-
-    while (!q.empty()) {
-        Nodes cur = q.front(); q.pop();
-        if (cur.x==b.x && cur.y==b.y) {
-            for (int k = 0; k < 4; k++) {
-            int nx = cur.x + dx[k];
-            int ny = cur.y + dy[k];
-
-                if (nx >= 0 && nx < 5 && ny >= 0 && ny < 10 &&
-                    !visited[nx][ny] && a[nx][ny] != 1) {
-
-                    visited[nx][ny] = true;
-                    q.push({nx, ny, cur.dist + 1});
-                }
+        if(u==t){
+            vector<pair<int,int>> path;
+            while(u!=s){
+                path.push_back(u);
+                u=parent[u];
             }
-            continue;
-        }
-        if (a[cur.x][cur.y] == 2) {
-            map[i][j] = map[j][i] = cur.dist; // lưu khoảng cách vào ma trận file matrix.txt
-            //cout << "So buoc ngan nhat: " << cur.dist << endl;
-            return;
+            path.push_back(s);
+            reverse(path.begin(),path.end());
+            return path;
         }
 
-        for (int k = 0; k < 4; k++) {
-            int nx = cur.x + dx[k];
-            int ny = cur.y + dy[k];
+        for(int i=0;i<4;i++){
+            int nx=u.first+dx[i];
+            int ny=u.second+dy[i];
 
-            if (nx >= 0 && nx < 5 && ny >= 0 && ny < 10 &&
-                !visited[nx][ny] && a[nx][ny] != 1) {
-
-                visited[nx][ny] = true;
-                q.push({nx, ny, cur.dist + 1});
+            if(valid(nx,ny) && !vis[{nx,ny}]){
+                vis[{nx,ny}]=true;
+                parent[{nx,ny}]=u;
+                q.push({nx,ny});
             }
         }
     }
+    return {};
+}
 
-    cout << "Khong tim thay duong!\n";
+int dist(pair<int,int> a, pair<int,int> b){
+    auto p = bfs(a,b);
+    if(p.empty()) return 1e9;
+    return p.size();
 }
