@@ -1,13 +1,9 @@
 #ifndef BFS_H
 #define BFS_H
-#include "matrix.h"
-#include <iostream>
-using namespace std;
-struct Nodes {
-    int x, y, dist;
-};
 
+#include "grid.h"
 
-void bfs(int map[][4], Node b, int i, int j);
+vector<pair<int,int>> bfs(pair<int,int> s, pair<int,int> t);
+int dist(pair<int,int> a, pair<int,int> b);
 
-#endif // BFS_H
+#endif
